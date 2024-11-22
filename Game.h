@@ -14,8 +14,22 @@ private:
     bool pieceSelected;
     int selectedX, selectedY;
 
+    Texture2D whiteKing;
+    Texture2D whiteQueen;
+    Texture2D whiteRook;
+    Texture2D whiteBishop;
+    Texture2D whiteKnight;
+    Texture2D whitePawn;
+    Texture2D blackKing;
+    Texture2D blackQueen;
+    Texture2D blackRook;
+    Texture2D blackBishop;
+    Texture2D blackKnight;
+    Texture2D blackPawn;
+
 public:
     Game();
+    ~Game();
     void run();
     void switchTurn();
     void draw() const; // Draw the UI and stuff not draw the chess

@@ -8,10 +8,27 @@ Game::Game() : whitePlayer("WHITE"), blackPlayer("BLACK"), currentPlayer(&whiteP
     board.init();
 }
 
+Game::~Game()
+{
+}
+
 void Game::run()
 {
     // Initialize the window
     InitWindow(800, 800, "Chess Game");
+    whiteKing = LoadTexture("assets/white_king.png");
+    whiteQueen = LoadTexture("assets/white_queen.png");
+    whiteRook = LoadTexture("assets/white_rook.png");
+    whiteBishop = LoadTexture("assets/white_bishop.png");
+    whiteKnight = LoadTexture("assets/white_knight.png");
+    whitePawn = LoadTexture("assets/white_pawn.png");
+
+    blackKing = LoadTexture("assets/black_king.png");
+    blackQueen = LoadTexture("assets/black_queen.png");
+    blackRook = LoadTexture("assets/black_rook.png");
+    blackBishop = LoadTexture("assets/black_bishop.png");
+    blackKnight = LoadTexture("assets/black_knight.png");
+    blackPawn = LoadTexture("assets/black_pawn.png");
 
     // Main game loop
     while (!WindowShouldClose())
@@ -38,7 +55,13 @@ void Game::run()
             {
                 // Move the selected piece
                 board.movePiece(selectedX, selectedY, xClick, yClick);
+
+                // Redraw the board to get the lastest version of pieces
+                board.draw(whiteKing, whiteQueen, whiteRook, whiteBishop, whiteKnight, whitePawn,
+                           blackKing, blackQueen, blackRook, blackBishop, blackKnight, blackPawn);
+
                 pieceSelected = false;
+
                 switchTurn();
             }
         }
@@ -64,7 +87,8 @@ void Game::switchTurn()
 void Game::draw() const
 {
     // Draw the UI stuff...
-    board.draw();
+    board.draw(whiteKing, whiteQueen, whiteRook, whiteBishop, whiteKnight, whitePawn,
+               blackKing, blackQueen, blackRook, blackBishop, blackKnight, blackPawn);
 }
 
 bool Game::isGameOver() const

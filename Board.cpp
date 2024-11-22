@@ -58,7 +58,8 @@ Piece *Board::getPiece(int x, int y) const
     return nullptr;
 }
 
-void Board::draw() const
+void Board::draw(Texture2D whiteKing, Texture2D whiteQueen, Texture2D whiteRook, Texture2D whiteBishop, Texture2D whiteKnight, Texture2D whitePawn,
+                 Texture2D blackKing, Texture2D blackQueen, Texture2D blackRook, Texture2D blackBishop, Texture2D blackKnight, Texture2D blackPawn) const
 {
     int cellSize = 100;
     for (int x = 0; x < 8; x++)
@@ -71,25 +72,47 @@ void Board::draw() const
             // Draw the chess if there is available
             if (this->board[x][y] != nullptr)
             {
-                char pieceChar;
-                std::string type = this->board[x][y]->getType();
-                if (type == "KING")
-                    pieceChar = 'K';
-                else if (type == "QUEEN")
-                    pieceChar = 'Q';
-                else if (type == "ROOK")
-                    pieceChar = 'R';
-                else if (type == "BISHOP")
-                    pieceChar = 'B';
-                else if (type == "KNIGHT")
-                    pieceChar = 'N';
-                else if (type == "PAWN")
-                    pieceChar = 'P';
-                else
-                    pieceChar = ' ';
+                // char pieceChar;
+                // std::string type = this->board[x][y]->getType();
+                // if (type == "KING")
+                //     pieceChar = 'K';
+                // else if (type == "QUEEN")
+                //     pieceChar = 'Q';
+                // else if (type == "ROOK")
+                //     pieceChar = 'R';
+                // else if (type == "BISHOP")
+                //     pieceChar = 'B';
+                // else if (type == "KNIGHT")
+                //     pieceChar = 'N';
+                // else if (type == "PAWN")
+                //     pieceChar = 'P';
+                // else
+                //     pieceChar = ' ';
 
-                std::string pieceStr(1, pieceChar); // Because the DrawText function needs this
-                DrawText(pieceStr.c_str(), x * cellSize + 40, y * cellSize + 40, 40, this->board[x][y]->getColor() == "WHITE" ? WHITE : BLACK);
+                // std::string pieceStr(1, pieceChar); // Because the DrawText function needs this
+                // DrawText(pieceStr.c_str(), x * cellSize + 40, y * cellSize + 40, 40, this->board[x][y]->getColor() == "WHITE" ? WHITE : BLACK);
+
+                Texture2D texture;
+                std::string type = this->board[x][y]->getType();
+                std::string color = this->board[x][y]->getColor();
+
+                if (type == "KING")
+                    texture = (color == "WHITE") ? whiteKing : blackKing;
+                else if (type == "QUEEN")
+                    texture = (color == "WHITE") ? whiteQueen : blackQueen;
+                else if (type == "ROOK")
+                    texture = (color == "WHITE") ? whiteRook : blackRook;
+                else if (type == "BISHOP")
+                    texture = (color == "WHITE") ? whiteBishop : blackBishop;
+                else if (type == "KNIGHT")
+                    texture = (color == "WHITE") ? whiteKnight : blackKnight;
+                else if (type == "PAWN")
+                    texture = (color == "WHITE") ? whitePawn : blackPawn;
+
+                int posX = x * cellSize + (cellSize - texture.width) / 2;
+                int posY = y * cellSize + (cellSize - texture.height) / 2;
+
+                DrawTexture(texture, posX, posY, WHITE);
             }
         }
     }
@@ -103,7 +126,6 @@ void Board::movePiece(int startX, int startY, int endX, int endY)
         board[endX][endY] = board[startX][startY];  // Move the choosen piece to the destination (just change the pointer, this pointer still has the startX startY position attribute though)
         board[startX][startY] = nullptr;            // Free the slot of the choosen piece
         board[endX][endY]->setPosition(endX, endY); // Actually update the position instead of just update the pointers like above
-        draw();
     }
 }
 
