@@ -18,35 +18,35 @@ void Board::init()
     // Place pawns
     for (int x = 0; x < 8; x++)
     {
-        board[x][1] = new Piece("PAWN", "WHITE", x, 1);
-        board[x][6] = new Piece("PAWN", "BLACK", x, 6);
+        board[x][1] = new Piece("PAWN", "BLACK", x, 1);
+        board[x][6] = new Piece("PAWN", "WHITE", x, 6);
     }
 
     // Place rooks
-    board[0][0] = new Piece("ROOK", "WHITE", 0, 0);
-    board[7][0] = new Piece("ROOK", "WHITE", 7, 0);
-    board[0][7] = new Piece("ROOK", "BLACK", 0, 7);
-    board[7][7] = new Piece("ROOK", "BLACK", 7, 7);
+    board[0][0] = new Piece("ROOK", "BLACK", 0, 0);
+    board[7][0] = new Piece("ROOK", "BLACK", 7, 0);
+    board[0][7] = new Piece("ROOK", "WHITE", 0, 7);
+    board[7][7] = new Piece("ROOK", "WHITE", 7, 7);
 
     // Place knights
-    board[1][0] = new Piece("KNIGHT", "WHITE", 1, 0);
-    board[6][0] = new Piece("KNIGHT", "WHITE", 6, 0);
-    board[1][7] = new Piece("KNIGHT", "BLACK", 1, 7);
-    board[6][7] = new Piece("KNIGHT", "BLACK", 6, 7);
+    board[1][0] = new Piece("KNIGHT", "BLACK", 1, 0);
+    board[6][0] = new Piece("KNIGHT", "BLACK", 6, 0);
+    board[1][7] = new Piece("KNIGHT", "WHITE", 1, 7);
+    board[6][7] = new Piece("KNIGHT", "WHITE", 6, 7);
 
     // Place bishops
-    board[2][0] = new Piece("BISHOP", "WHITE", 2, 0);
-    board[5][0] = new Piece("BISHOP", "WHITE", 5, 0);
-    board[2][7] = new Piece("BISHOP", "BLACK", 2, 7);
-    board[5][7] = new Piece("BISHOP", "BLACK", 5, 7);
+    board[2][0] = new Piece("BISHOP", "BLACK", 2, 0);
+    board[5][0] = new Piece("BISHOP", "BLACK", 5, 0);
+    board[2][7] = new Piece("BISHOP", "WHITE", 2, 7);
+    board[5][7] = new Piece("BISHOP", "WHITE", 5, 7);
 
     // Place queens
-    board[3][0] = new Piece("QUEEN", "WHITE", 3, 0);
-    board[3][7] = new Piece("QUEEN", "BLACK", 3, 7);
+    board[3][0] = new Piece("QUEEN", "BLACK", 3, 0);
+    board[3][7] = new Piece("QUEEN", "WHITE", 3, 7);
 
     // Place kings
-    board[4][0] = new Piece("KING", "WHITE", 4, 0);
-    board[4][7] = new Piece("KING", "BLACK", 4, 7);
+    board[4][0] = new Piece("KING", "BLACK", 4, 0);
+    board[4][7] = new Piece("KING", "WHITE", 4, 7);
 }
 
 Piece *Board::getPiece(int x, int y) const
@@ -72,26 +72,6 @@ void Board::draw(Texture2D whiteKing, Texture2D whiteQueen, Texture2D whiteRook,
             // Draw the chess if there is available
             if (this->board[x][y] != nullptr)
             {
-                // char pieceChar;
-                // std::string type = this->board[x][y]->getType();
-                // if (type == "KING")
-                //     pieceChar = 'K';
-                // else if (type == "QUEEN")
-                //     pieceChar = 'Q';
-                // else if (type == "ROOK")
-                //     pieceChar = 'R';
-                // else if (type == "BISHOP")
-                //     pieceChar = 'B';
-                // else if (type == "KNIGHT")
-                //     pieceChar = 'N';
-                // else if (type == "PAWN")
-                //     pieceChar = 'P';
-                // else
-                //     pieceChar = ' ';
-
-                // std::string pieceStr(1, pieceChar); // Because the DrawText function needs this
-                // DrawText(pieceStr.c_str(), x * cellSize + 40, y * cellSize + 40, 40, this->board[x][y]->getColor() == "WHITE" ? WHITE : BLACK);
-
                 Texture2D texture;
                 std::string type = this->board[x][y]->getType();
                 std::string color = this->board[x][y]->getColor();
