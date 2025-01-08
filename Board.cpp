@@ -100,7 +100,7 @@ void Board::draw(Texture2D whiteKing, Texture2D whiteQueen, Texture2D whiteRook,
 
 void Board::movePiece(int startX, int startY, int endX, int endY)
 {
-    if (isValidMove(endX, endY))
+    if (isValidMove(startX, startY, endX, endY))
     {
         delete board[endX][endY];                   // Remove the piece at the destination
         board[endX][endY] = board[startX][startY];  // Move the choosen piece to the destination (just change the pointer, this pointer still has the startX startY position attribute though)
@@ -109,9 +109,143 @@ void Board::movePiece(int startX, int startY, int endX, int endY)
     }
 }
 
-bool Board::isValidMove(int targetX, int targetY) const
+bool Board::isValidMove(int startX, int startY, int endX, int endY) const
 {
-    // Add logic to check if the move is valid
-    // For simplicity, let's assume all moves are valid
-    return true;
+    // Current Bug: when try to move queen or king it stops the game
+    // Check if the move is within the bounds of the board
+    if (startX < 0 || startX >= 8 || startY < 0 || startY >= 8 || endX < 0 || endX >= 8 || endY < 0 || endY >= 8)
+    {
+        return false;
+    }
+
+    // Check if there is a piece at the starting position
+    Piece *piece = board[startX][startY];
+    if (piece == nullptr)
+    {
+        return false;
+    }
+
+    // Check if the destination is the same as the starting position
+    if (startX == endX && startY == endY)
+    {
+        return false;
+    }
+
+    // Check if the destination has a piece of the same color
+    Piece *destinationPiece = board[endX][endY];
+    if (destinationPiece != nullptr && destinationPiece->getColor() == piece->getColor())
+    {
+        return false;
+    }
+
+    // Add specific rules for each type of piece
+    std::string type = piece->getType();
+    if (type == "PAWN")
+    {
+        // Add logic for pawn movement
+        int direction = (piece->getColor() == "WHITE") ? -1 : 1;
+        if (startX == endX && board[endX][endY] == nullptr)
+        {
+            // Move forward
+            if (endY == startY + direction)
+            {
+                return true;
+            }
+            // Move two squares forward from the starting position
+            if ((startY == 1 && piece->getColor() == "BLACK" || startY == 6 && piece->getColor() == "WHITE") && endY == startY + 2 * direction && board[endX][startY + direction] == nullptr)
+            {
+                return true;
+            }
+        }
+        else if (abs(startX - endX) == 1 && endY == startY + direction && board[endX][endY] != nullptr)
+        {
+            // Capture diagonally
+            return true;
+        }
+    }
+    else if (type == "ROOK")
+    {
+        // Add logic for rook movement
+        if (startX == endX || startY == endY)
+        {
+            // Check if the path is clear
+            int xDirection = (endX - startX) == 0 ? 0 : (endX - startX) / abs(endX - startX);
+            int yDirection = (endY - startY) == 0 ? 0 : (endY - startY) / abs(endY - startY);
+            int x = startX + xDirection;
+            int y = startY + yDirection;
+            while (x != endX || y != endY)
+            {
+                if (board[x][y] != nullptr)
+                {
+                    return false;
+                }
+                x += xDirection;
+                y += yDirection;
+            }
+            return true;
+        }
+    }
+    else if (type == "KNIGHT")
+    {
+        // Add logic for knight movement
+        if ((abs(startX - endX) == 2 && abs(startY - endY) == 1) || (abs(startX - endX) == 1 && abs(startY - endY) == 2))
+        {
+            return true;
+        }
+    }
+    else if (type == "BISHOP")
+    {
+        // Add logic for bishop movement
+        if (abs(startX - endX) == abs(startY - endY))
+        {
+            // Check if the path is clear
+            int xDirection = (endX - startX) / abs(endX - startX);
+            int yDirection = (endY - startY) / abs(endY - startY);
+            int x = startX + xDirection;
+            int y = startY + yDirection;
+            while (x != endX || y != endY)
+            {
+                if (board[x][y] != nullptr)
+                {
+                    return false;
+                }
+                x += xDirection;
+                y += yDirection;
+            }
+            return true;
+        }
+    }
+    else if (type == "QUEEN")
+    {
+        // Add logic for queen movement
+        if (startX == endX || startY == endY || abs(startX - endX) == abs(startY - endY))
+        {
+            // Check if the path is clear
+            int xDirection = (endX - startX) == 0 ? 0 : (endX - startX) / abs(endX - startX);
+            int yDirection = (endY - startY) == 0 ? 0 : (endY - startY) / abs(endY - startY);
+            int x = startX + xDirection;
+            int y = startY + yDirection;
+            while (x != endX || y != endY)
+            {
+                if (board[x][y] != nullptr)
+                {
+                    return false;
+                }
+                x += xDirection;
+                y += yDirection;
+            }
+            return true;
+        }
+    }
+    else if (type == "KING")
+    {
+        // Add logic for king movement
+        if (abs(startX - endX) <= 1 && abs(startY - endY) <= 1)
+        {
+            return true;
+        }
+    }
+
+    // If none of the conditions are met, the move is not valid
+    return false;
 }

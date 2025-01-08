@@ -18,8 +18,8 @@ public:
               Texture2D blackKing, Texture2D blackQueen, Texture2D blackRook, Texture2D blackBishop, Texture2D blackKnight, Texture2D blackPawn) const;
     Piece *getPiece(int x, int y) const;
     void movePiece(int startX, int startY, int endX, int endY);
-    bool isValidMove(int targetX, int targetY) const; // This should be get called from the movePiece function
-    bool isCheckMate() const;                         // Input: the color from the piece you want to check
+    bool isValidMove(int startX, int startY, int endX, int endY) const; // This should be get called from the movePiece function
+    bool isCheckMate() const;                                           // Input: the color from the piece you want to check
 };
 
 #endif

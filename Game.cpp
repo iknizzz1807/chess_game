@@ -54,15 +54,19 @@ void Game::run()
             else
             {
                 // Move the selected piece
-                board.movePiece(selectedX, selectedY, xClick, yClick);
+                if (board.isValidMove(selectedX, selectedY, xClick, yClick))
+                {
 
-                // Redraw the board to get the lastest version of pieces
-                board.draw(whiteKing, whiteQueen, whiteRook, whiteBishop, whiteKnight, whitePawn,
-                           blackKing, blackQueen, blackRook, blackBishop, blackKnight, blackPawn);
+                    board.movePiece(selectedX, selectedY, xClick, yClick);
 
-                pieceSelected = false;
+                    // Redraw the board to get the lastest version of pieces
+                    board.draw(whiteKing, whiteQueen, whiteRook, whiteBishop, whiteKnight, whitePawn,
+                               blackKing, blackQueen, blackRook, blackBishop, blackKnight, blackPawn);
 
-                switchTurn();
+                    pieceSelected = false;
+
+                    switchTurn();
+                }
             }
         }
 
@@ -93,6 +97,31 @@ void Game::draw() const
 
 bool Game::isGameOver() const
 {
-    // Add logic to check if the game is over
-    return false;
+    // Check if either king is missing
+    bool whiteKingAlive = false;
+    bool blackKingAlive = false;
+
+    for (int x = 0; x < 8; x++)
+    {
+        for (int y = 0; y < 8; y++)
+        {
+            Piece *piece = board.getPiece(x, y);
+            if (piece != nullptr)
+            {
+                if (piece->getType() == "KING")
+                {
+                    if (piece->getColor() == "WHITE")
+                    {
+                        whiteKingAlive = true;
+                    }
+                    else if (piece->getColor() == "BLACK")
+                    {
+                        blackKingAlive = true;
+                    }
+                }
+            }
+        }
+    }
+
+    return !(whiteKingAlive && blackKingAlive);
 }
