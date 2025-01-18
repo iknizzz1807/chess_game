@@ -1,5 +1,6 @@
 #include "Board.h"
 #include <string>
+#include <vector>
 
 Board::Board()
 {
@@ -15,6 +16,15 @@ Board::Board()
 
 void Board::init()
 {
+    // Initialize all squares to nullptr
+    for (int x = 0; x < 8; x++)
+    {
+        for (int y = 0; y < 8; y++)
+        {
+            board[x][y] = nullptr;
+        }
+    }
+
     // Place pawns
     for (int x = 0; x < 8; x++)
     {
@@ -111,34 +121,28 @@ void Board::movePiece(int startX, int startY, int endX, int endY)
 
 bool Board::isValidMove(int startX, int startY, int endX, int endY) const
 {
-    // Current Bug: when try to move queen or king it stops the game
-    // Check if the move is within the bounds of the board
     if (startX < 0 || startX >= 8 || startY < 0 || startY >= 8 || endX < 0 || endX >= 8 || endY < 0 || endY >= 8)
     {
         return false;
     }
 
-    // Check if there is a piece at the starting position
     Piece *piece = board[startX][startY];
     if (piece == nullptr)
     {
         return false;
     }
 
-    // Check if the destination is the same as the starting position
     if (startX == endX && startY == endY)
     {
         return false;
     }
 
-    // Check if the destination has a piece of the same color
     Piece *destinationPiece = board[endX][endY];
     if (destinationPiece != nullptr && destinationPiece->getColor() == piece->getColor())
     {
         return false;
     }
 
-    // Add specific rules for each type of piece
     std::string type = piece->getType();
     if (type == "PAWN")
     {
@@ -146,12 +150,10 @@ bool Board::isValidMove(int startX, int startY, int endX, int endY) const
         int direction = (piece->getColor() == "WHITE") ? -1 : 1;
         if (startX == endX && board[endX][endY] == nullptr)
         {
-            // Move forward
             if (endY == startY + direction)
             {
                 return true;
             }
-            // Move two squares forward from the starting position
             if ((startY == 1 && piece->getColor() == "BLACK" || startY == 6 && piece->getColor() == "WHITE") && endY == startY + 2 * direction && board[endX][startY + direction] == nullptr)
             {
                 return true;
@@ -159,13 +161,11 @@ bool Board::isValidMove(int startX, int startY, int endX, int endY) const
         }
         else if (abs(startX - endX) == 1 && endY == startY + direction && board[endX][endY] != nullptr)
         {
-            // Capture diagonally
             return true;
         }
     }
     else if (type == "ROOK")
     {
-        // Add logic for rook movement
         if (startX == endX || startY == endY)
         {
             // Check if the path is clear
@@ -187,7 +187,6 @@ bool Board::isValidMove(int startX, int startY, int endX, int endY) const
     }
     else if (type == "KNIGHT")
     {
-        // Add logic for knight movement
         if ((abs(startX - endX) == 2 && abs(startY - endY) == 1) || (abs(startX - endX) == 1 && abs(startY - endY) == 2))
         {
             return true;
@@ -195,7 +194,6 @@ bool Board::isValidMove(int startX, int startY, int endX, int endY) const
     }
     else if (type == "BISHOP")
     {
-        // Add logic for bishop movement
         if (abs(startX - endX) == abs(startY - endY))
         {
             // Check if the path is clear
@@ -217,7 +215,6 @@ bool Board::isValidMove(int startX, int startY, int endX, int endY) const
     }
     else if (type == "QUEEN")
     {
-        // Add logic for queen movement
         if (startX == endX || startY == endY || abs(startX - endX) == abs(startY - endY))
         {
             // Check if the path is clear
@@ -239,7 +236,6 @@ bool Board::isValidMove(int startX, int startY, int endX, int endY) const
     }
     else if (type == "KING")
     {
-        // Add logic for king movement
         if (abs(startX - endX) <= 1 && abs(startY - endY) <= 1)
         {
             return true;
@@ -248,4 +244,21 @@ bool Board::isValidMove(int startX, int startY, int endX, int endY) const
 
     // If none of the conditions are met, the move is not valid
     return false;
+}
+
+std::vector<std::pair<int, int>> Board::getValidMoves(int startX, int startY) const
+{
+    std::vector<std::pair<int, int>> validMoves;
+    for (int x = 0; x < 8; x++)
+    {
+        for (int y = 0; y < 8; y++)
+        {
+            if (isValidMove(startX, startY, x, y))
+            {
+                validMoves.push_back(std::make_pair(x, y));
+            }
+        }
+    }
+
+    return validMoves;
 }

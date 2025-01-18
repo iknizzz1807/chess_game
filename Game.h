@@ -13,6 +13,8 @@ private:
     Board board;
     bool pieceSelected;
     int selectedX, selectedY;
+    std::vector<std::pair<int, int>> validMoves;
+    bool gameOver;
 
     Texture2D whiteKing;
     Texture2D whiteQueen;
@@ -35,6 +37,7 @@ public:
     void draw() const; // Draw the UI and stuff not draw the chess
     bool isGameOver() const;
     // Const means this is just for running and not change anything
+    void resetGame();
 };
 
 #endif // GAME_H

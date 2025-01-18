@@ -3,6 +3,7 @@
 
 #include "raylib.h"
 #include "Piece.h"
+#include <vector>
 
 class Board
 {
@@ -20,6 +21,7 @@ public:
     void movePiece(int startX, int startY, int endX, int endY);
     bool isValidMove(int startX, int startY, int endX, int endY) const; // This should be get called from the movePiece function
     bool isCheckMate() const;                                           // Input: the color from the piece you want to check
+    std::vector<std::pair<int, int>> getValidMoves(int startX, int startY) const;
 };
 
 #endif

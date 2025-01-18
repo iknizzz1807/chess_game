@@ -2,7 +2,7 @@
 #include "raylib.h"
 #include "Player.h"
 
-Game::Game() : whitePlayer("WHITE"), blackPlayer("BLACK"), currentPlayer(&whitePlayer), pieceSelected(false), selectedX(-1), selectedY(-1)
+Game::Game() : whitePlayer("WHITE"), blackPlayer("BLACK"), currentPlayer(&whitePlayer), pieceSelected(false), selectedX(-1), selectedY(-1), gameOver(false)
 {
     // Initialize the board
     board.init();
@@ -34,39 +34,61 @@ void Game::run()
     while (!WindowShouldClose())
     {
         // Update game state
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        if (!gameOver)
         {
-            // Handle mouse click for moving pieces
-            Vector2 mousePosition = GetMousePosition();
-            int xClick = mousePosition.x / 100;
-            int yClick = mousePosition.y / 100;
-
-            if (!pieceSelected)
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
             {
-                // Select a piece
-                if (board.getPiece(xClick, yClick) != nullptr && board.getPiece(xClick, yClick)->getColor() == currentPlayer->getColor())
+                // Handle mouse click for moving pieces
+                Vector2 mousePosition = GetMousePosition();
+                int xClick = mousePosition.x / 100;
+                int yClick = mousePosition.y / 100;
+
+                if (!pieceSelected)
                 {
-                    pieceSelected = true;
-                    selectedX = xClick;
-                    selectedY = yClick;
+                    // Select a piece
+                    if (board.getPiece(xClick, yClick) != nullptr && board.getPiece(xClick, yClick)->getColor() == currentPlayer->getColor())
+                    {
+                        pieceSelected = true;
+                        selectedX = xClick;
+                        selectedY = yClick;
+                        validMoves = board.getValidMoves(selectedX, selectedY);
+                    }
+                }
+                else
+                {
+                    // Move the selected piece
+                    if (board.isValidMove(selectedX, selectedY, xClick, yClick))
+                    {
+                        board.movePiece(selectedX, selectedY, xClick, yClick);
+
+                        board.draw(whiteKing, whiteQueen, whiteRook, whiteBishop, whiteKnight, whitePawn,
+                                   blackKing, blackQueen, blackRook, blackBishop, blackKnight, blackPawn);
+
+                        pieceSelected = false;
+                        validMoves.clear();
+
+                        switchTurn();
+                    }
+                    else
+                    {
+                        pieceSelected = false;
+                        validMoves.clear();
+                    }
                 }
             }
-            else
+
+            // Check if the game is over
+            if (isGameOver())
             {
-                // Move the selected piece
-                if (board.isValidMove(selectedX, selectedY, xClick, yClick))
-                {
-
-                    board.movePiece(selectedX, selectedY, xClick, yClick);
-
-                    // Redraw the board to get the lastest version of pieces
-                    board.draw(whiteKing, whiteQueen, whiteRook, whiteBishop, whiteKnight, whitePawn,
-                               blackKing, blackQueen, blackRook, blackBishop, blackKnight, blackPawn);
-
-                    pieceSelected = false;
-
-                    switchTurn();
-                }
+                gameOver = true;
+            }
+        }
+        else
+        {
+            // Check if the player wants to restart the game
+            if (IsKeyPressed(KEY_R))
+            {
+                resetGame();
             }
         }
 
@@ -93,6 +115,28 @@ void Game::draw() const
     // Draw the UI stuff...
     board.draw(whiteKing, whiteQueen, whiteRook, whiteBishop, whiteKnight, whitePawn,
                blackKing, blackQueen, blackRook, blackBishop, blackKnight, blackPawn);
+
+    int cellSize = 100;
+
+    // Tô xanh lam ô được chọn
+    if (pieceSelected)
+    {
+        DrawRectangle(selectedX * cellSize, selectedY * cellSize, cellSize, cellSize, Fade(BLUE, 0.5f));
+    }
+
+    // Tô xanh các ô có thể di chuyển tới
+    for (const auto &move : validMoves)
+    {
+        int x = move.first;
+        int y = move.second;
+        DrawRectangle(x * cellSize, y * cellSize, cellSize, cellSize, Fade(GREEN, 0.5f));
+    }
+
+    // Hiển thị thông báo "Game Over" nếu trò chơi kết thúc
+    if (gameOver)
+    {
+        DrawText("Game Over! Press R to Restart", 200, 400, 20, RED);
+    }
 }
 
 bool Game::isGameOver() const
@@ -124,4 +168,15 @@ bool Game::isGameOver() const
     }
 
     return !(whiteKingAlive && blackKingAlive);
+}
+
+void Game::resetGame()
+{
+    board.init();
+    currentPlayer = &whitePlayer;
+    pieceSelected = false;
+    selectedX = -1;
+    selectedY = -1;
+    validMoves.clear();
+    gameOver = false;
 }
